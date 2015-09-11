@@ -56,10 +56,21 @@ public class LexerTests {
 	}
 
 		
-
+	@Test
+	public void testStringLiteralWithDoubleQuote() {
+		runtest("\"\"\"",
+				(Token)null);
+	}
+	
+	@Test
+	public void testStringLiteralEscapeCharacter() {
+		runtest("\"\\n\"",
+				new Token(STRING_LITERAL, 0, 0, "\\n"),
+				new Token(EOF, 0, 4, ""));
+	}
 	
 	//////////////////////////////////////////////
-	//The following test cases are extracted from Li Siyao's repo
+	//Add the test cases from Li Siyao
 	@Test
 	public void testKWs2(){
 		// testing key words - 2
@@ -121,12 +132,6 @@ public class LexerTests {
 				new Token(EOF, 0, 23, ""));
 	}
 		
-	@Test
-	public void testStringLiteralWithDoubleQuote() {
-		// testing string """
-		runtest("\"\"\"",
-				(Token)null);
-	}
 	
 	@Test
 	public void testStringLiteralWithDoubleQuote1(){
@@ -139,7 +144,7 @@ public class LexerTests {
 	// no \n or no line break in between?
 	// and why only one NULL will pass the test?
 	@Test
-	public void testStringLiteralEscapeCharacter() {
+	public void testStringLiteralEscapeCharacter0() {
 		// testing escape character \n
 		// testing "
 		//         "
