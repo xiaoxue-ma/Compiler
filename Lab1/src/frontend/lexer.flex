@@ -22,7 +22,7 @@ import static frontend.Token.Type.*;
 	*/
 	
 	private Token token(Token.Type type) {
-		return new Token(type,this.yyline,this.yycolumn,yytext);
+		return new Token(type,this.yyline,this.yycolumn,yytext());
 	}
 	
 	/* Use this method for rules where you need to process yytext() to get the lexeme of the token.
