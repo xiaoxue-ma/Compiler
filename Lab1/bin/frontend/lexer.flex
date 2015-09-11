@@ -22,7 +22,7 @@ import static frontend.Token.Type.*;
 	*/
 	
 	private Token token(Token.Type type) {
-		return new Token(type,this.yyline,this.yycolumn,yytext);
+		return new Token(type,this.yyline,this.yycolumn,yytext());
 	}
 	
 	/* Use this method for rules where you need to process yytext() to get the lexeme of the token.
@@ -41,10 +41,10 @@ import static frontend.Token.Type.*;
 
 /* This definition may come in handy. If you wish, you can add more definitions here. */
 WhiteSpace = [ ] | \t | \f | \n | \r
-letter = [a-zA-Z]
+letter = [A-Za-z]
 digit = [0-9]
-alphanumeric = [0-9a-zA-Z]
-
+alphanumeric = [0-9A-Za-z]
+id_char = [_]
 %%
 /* put in your rules here.    */
 
@@ -88,6 +88,11 @@ alphanumeric = [0-9a-zA-Z]
 "type"     {return token(Token.Type.TYPE);}
 "void"     {return token(Token.Type.VOID);}
 "while"     {return token(Token.Type.WHILE);}
+
+{WhiteSpace} {}
+{digit}+					{ return token(INT_LITERAL,yytext()); }
+{letter}({alphanumeric}|{id_char})* { return token(ID,yytext()); }
+\"[^\"]*\"					{ return token(STRING_LITERAL, yytext()); }
 
 /* You don't need to change anything below this line. */
 .							{ throw new Error("unexpected character '" + yytext() + "'"); }
