@@ -135,6 +135,19 @@ public class LexerTests {
     // ASK
     // no \n or no line break in between?
     // and why only one NULL will pass the test?
+//    result expected by siyao's group
+//    @Test
+//    public void testStringLiteralEscapeCharacter() {
+//        // testing escape character \n
+//        // testing "
+//        //         "
+//        runtest("\"\n\"",
+//                (Token)null,
+//                new Token(STRING_LITERAL, 0, 1, "\n"),
+//                (Token)null,
+//                new Token(EOF, 1, 1, ""));
+//    }
+
     @Test
     public void testStringLiteralEscapeCharacter() {
         // testing escape character \n
