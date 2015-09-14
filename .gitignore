@@ -6,6 +6,12 @@
 # Package Files #
 *.war
 *.ear
+Lab1/.project
+Lab1/.settings/
+*.idea
+Lab1/*.iml
+.metadata
+RemoteSystemsTempFiles/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
