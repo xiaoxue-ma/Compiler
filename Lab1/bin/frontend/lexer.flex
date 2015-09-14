@@ -79,11 +79,9 @@ id_char = [_]
 "if"            {return token(Token.Type.IF);}
 "import"        {return token(Token.Type.IMPORT);}
 "int"           {return token(Token.Type.INT);}
-"boolean"       {return token(Token.Type.BOOLEAN);}
 "module"        {return token(Token.Type.MODULE);}
 "public"        {return token(Token.Type.PUBLIC);}
 "return"        {return token(Token.Type.RETURN);}
-"boolean"       {return token(Token.Type.BOOLEAN);}
 "true"          {return token(Token.Type.TRUE);}
 "type"          {return token(Token.Type.TYPE);}
 "void"          {return token(Token.Type.VOID);}
