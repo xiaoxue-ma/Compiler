@@ -168,5 +168,14 @@ public class LexerTests {
                 new Token(STRING_LITERAL, 0, 0, "abc\\ndef"),
                 new Token(EOF, 0, 10, ""));
     }
+
+    @Test
+    public void testStringID(){
+        //Input "acd3" acd3
+        runtest("\"acd3\" acd3",
+                new Token(STRING_LITERAL,0,0,"acd3"),
+                new Token(ID,0,7,"acd3"),
+                new Token(EOF,0,11,""));
+        }
 	
 }
