@@ -7,7 +7,10 @@
 *.war
 *.ear
 *.idea
-Lab1/*.iml
+*.iml
+*gen/
+*bin/
+
 RemoteSystemsTempFiles/
 .metadata
 
