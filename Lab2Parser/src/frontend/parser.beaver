@@ -23,176 +23,132 @@
 %goal Module;
 
 // temporary declaration, you can remove this once you have written all other rules
-//%goal Dummy;
+// %goal Dummy;
 
-/* TODO: Flesh out the rule for Module, and add rules for other nonterminals. Here is an example
-         of a rule you may want to add:
-         
-   Accessibility = PUBLIC
-		  |
-		  ;
-  */
-
-Module  = MODULE ID LCURLY Imports Declarations RCURLY
-	    ;
+Module = MODULE ID LCURLY Imports Declarations RCURLY
+    ;
 Imports = Import Imports
-		|
-		;
-Import  = IMPORT ID SEMICOLON
-		;
-		
-
+    |
+    ;
+Import = IMPORT ID SEMICOLON
+    ;
 Declarations = Declaration Declarations
-			 | 
-			 ;
-			 
-Declaration = Function_Declaration
-			| Field_Declaration
-			| Type_Declaration
-			;
-						
-Function_Declaration = Accessibility Type_Name ID  LPAREN Parameters RPAREN LCURLY Statements RCURLY
-					;
-
-Field_Declaration = Accessibility Type_Name ID SEMICOLON
-					;
-
-Type_Declaration = Accessibility TYPE ID EQL STRING_LITERAL SEMICOLON
-					;
-					
+    | 
+    ;
+Declaration = FunctionDeclaration
+    | FieldDeclaration
+    | TypeDeclaration
+    ;
+FunctionDeclaration = Accessibility TypeName ID LPAREN ParameterList RPAREN LCURLY StatementList RCURLY 
+    ;
+FieldDeclaration = Accessibility TypeName ID SEMICOLON
+    ;
+TypeDeclaration = Accessibility TYPE ID EQL STRING_LITERAL SEMICOLON 
+    ;
 Accessibility = PUBLIC
-		  |
-		  ;
-		  
-		  
+	|
+	;
+TypeName = PrimitiveType
+    | ArrayType
+    | ID
+    ;
+PrimitiveType = VOID
+	| BOOLEAN
+	| INT
+	;
 
-Type_Name = Primitive
-		  | Array
-		  | ID
-		  ;
-		  
-Primitive = VOID
-		  | BOOLEAN
-		  | INT
-		  ;
-		  
-Array = Primitive LBRACKET RBRACKET
-	  | Array LBRACKET RBRACKET
-	  | ID LBRACKET RBRACKET
-	  ;
+ArrayType = PrimitiveType LBRACKET RBRACKET  
+    | ArrayType LBRACKET RBRACKET
+    | ID LBRACKET RBRACKET  
+    ;
 
+// Must separate, otherwise we will have problem with COMMA
+// Prefer left recursion in case of comma in follow.
+NonEmptyParameterList = NonEmptyParameterList COMMA Parameter
+	| Parameter
+	;
+ParameterList = NonEmptyParameterList
+	|
+	;
+Parameter = TypeName ID
+	;
+StatementList = Statement StatementList
+    |
+    ;
+Statement = TypeName ID SEMICOLON  
+    | LCURLY StatementList RCURLY  
+    | IfStatement
+    | WHILE LPAREN Expression RPAREN Statement 
+    | BREAK SEMICOLON 
+    | ReturnStatement 
+    | Expression SEMICOLON 
+    ;
+IfStatement = IF LPAREN Expression RPAREN Statement 
+    | IF LPAREN Expression RPAREN Statement ELSE Statement // shift-reduce conflict
+    ;
 
+ReturnStatement = RETURN Expression SEMICOLON 
+    | RETURN SEMICOLON 
+    ;
+Expression = Assignment 
+    | RhsExpression 
+    ;
+Assignment = LhsExpression EQL Expression
+    ;
 
+LhsExpression = ID
+    | ArrayAccess
+    ;
+ArrayAccess = ID LBRACKET Expression RBRACKET 
+    | ArrayAccess LBRACKET Expression RBRACKET
+    ;
+RhsExpression = ArithmeticExpression 
+    | ArithmeticExpression ComparisonOperator ArithmeticExpression 
+    ;
+ComparisonOperator = EQEQ
+    | NEQ
+    | LT
+    | LEQ
+    | GT
+    | GEQ 
+    ;
 
-Parameters = Parameter COMMA Parameters
-|Parameter
-|
-;
+ArithmeticExpression = ArithmeticExpression AdditiveOperator Term  // Left recursion 
+    | Term
+    ;
+AdditiveOperator = PLUS
+    | MINUS
+    ;
 
-		
-Parameter = Type_Name ID
-			;
-
-Statements = Statement Statements
-			| 
-			;
-
-Statement = Type_Name ID SEMICOLON
-			| LCURLY Statements RCURLY
-			| IF_Statement
-			| WHILE LPAREN Expression RPAREN Statement
-			| BREAK SEMICOLON
-			| Return_Statement
-			| Expression SEMICOLON
-			;
-
-IF_Statement = IF LPAREN Expression RPAREN Statement 
-			   |IF LPAREN Expression RPAREN Statement ELSE Statement
-			   ;
-			   
-Return_Statement = RETURN SEMICOLON
-				 | RETURN Expression SEMICOLON
-				;
-
-
-	  
-	  
-Expression = Assignment
-		   | Right_Expression
-		   ;
-Assignment = Left_Expression EQL Expression
-		   ;
-		   
-		   
-Left_Expression = ID Index_Part
-;
-Index_Part = LBRACKET Expression RBRACKET Index_Part
-|
-;
-
-
-			    
-			    
-Right_Expression = Arith_Expression
-				 | Arith_Expression Comparison Arith_Expression
-				 ;
-				 
-Comparison = EQEQ
-		   | NEQ
-		   | LT
-		   | LEQ
-		   | GT
-		   | GEQ
-		   ; 
-		   
-Arith_Expression = Arith_Expression Additive Term
-				 | Term
-				 ;
-Additive = PLUS
-		 | MINUS
-		 ;
-		 
-Term = Term Multiplicative Factor
-	 | Factor
-	 ;
-	 
-Multiplicative = TIMES
-			   | DIV
-			   | MOD
-			   ;
+Term = Term MultiplicativeOperator Factor // left recursion 
+    | Factor
+    ;
+MultiplicativeOperator = TIMES
+    | DIV
+    | MOD 
+    ;
 Factor = MINUS Factor
-	   | Primary_Expression
-	   ;
-Primary_Expression = Left_Expression
-				   | Function_Call
-				   | Array_Expression
-				   | STRING_LITERAL
-				   | INT_LITERAL
-				   | Boolean
-				   | Paren_Expression
-				   ;
-Boolean = TRUE
-		| FALSE
-		;
-Array_Expression = LBRACKET Expressions RBRACKET
-				 ;
-Paren_Expression = LPAREN Expression RPAREN
-				 ; 
-Function_Call = ID LPAREN Empty_Expressions RPAREN
-			  ;
-Expressions = Expressions COMMA Expression
-		    | Expression
-		    ;
-Empty_Expressions = Expressions
-				  |
-				  ;
+    | PrimaryExpression 
+    ;
+PrimaryExpression = LhsExpression 
+    | ID LPAREN ExpressionList RPAREN  
+    | LBRACKET NonEmptyExpressionList RBRACKET 
+    | STRING_LITERAL 
+    | INT_LITERAL
+    | TRUE
+    | FALSE
+    | LPAREN Expression RPAREN  
+    ;
 
+NonEmptyExpressionList = Expression
+    | NonEmptyExpressionList COMMA Expression  
+    ;
 
-
-
-
+ExpressionList = NonEmptyExpressionList
+    | 
+    ; 
 /**/
 
-/* Dummy rule to make the lexer compile. Remove this once you have written all other rules. */	  
-/*Dummy = MODULE INT VOID IF ELSE WHILE RETURN BREAK BOOLEAN PUBLIC TRUE FALSE INT_LITERAL STRING_LITERAL ID TYPE IMPORT
-           PLUS MINUS TIMES DIV MOD EQEQ NEQ LEQ GEQ LT GT LBRACKET RPAREN COMMA RCURLY LCURLY SEMICOLON RBRACKET LPAREN EQL;*/
+/* Dummy rule to make the lexer compile. Remove this once you have written all other rules. 
+Dummy = MODULE INT VOID IF ELSE WHILE RETURN BREAK BOOLEAN PUBLIC TRUE FALSE INT_LITERAL STRING_LITERAL ID TYPE IMPORT
+           PLUS MINUS TIMES DIV MOD EQEQ NEQ LEQ GEQ LT GT LBRACKET RPAREN COMMA RCURLY LCURLY SEMICOLON RBRACKET LPAREN EQL;*/	  
